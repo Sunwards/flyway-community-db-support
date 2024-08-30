@@ -54,7 +54,7 @@ public class ClickHouseSchema extends Schema<ClickHouseDatabase, ClickHouseTable
         ClickHouseConnection systemConnection = database.getSystemConnection();
         String clusterName = database.getClusterName();
         boolean isClustered = StringUtils.hasText(clusterName);
-        systemConnection.getJdbcTemplate().executeStatement("CREATE DATABASE " + database.quote(name) + (isClustered ? (" ON CLUSTER " + clusterName) : ""));
+        systemConnection.getJdbcTemplate().executeStatement("CREATE DATABASE " + database.quote(name) + (isClustered ? (" ON CLUSTER `" + clusterName + "`") : ""));
     }
 
     @Override
@@ -64,7 +64,7 @@ public class ClickHouseSchema extends Schema<ClickHouseDatabase, ClickHouseTable
         }
         String clusterName = database.getClusterName();
         boolean isClustered = StringUtils.hasText(clusterName);
-        jdbcTemplate.executeStatement("DROP DATABASE " + database.quote(name) + (isClustered ? (" ON CLUSTER " + clusterName) : ""));
+        jdbcTemplate.executeStatement("DROP DATABASE " + database.quote(name) + (isClustered ? (" ON CLUSTER `" + clusterName + "`") : ""));
     }
 
     @Override

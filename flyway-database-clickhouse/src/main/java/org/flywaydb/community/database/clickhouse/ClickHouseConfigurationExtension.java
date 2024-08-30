@@ -24,11 +24,14 @@ import java.util.Map;
 public class ClickHouseConfigurationExtension implements ConfigurationExtension {
     private static final String CLUSTER_NAME = "flyway.clickhouse.clusterName";
     private static final String ZOOKEEPER_PATH = "flyway.clickhouse.zookeeperPath";
+    private static final String REPLICA_NAME = "flyway.clickhouse.replicaName";
 
     private static final String ZOOKEEPER_PATH_DEFAULT_VALUE = "/clickhouse/tables/{shard}/{database}/{table}";
+    private static final String REPLICA_NAME_DEFAULT_VALUE = "{replica}";
 
     private String clusterName;
     private String zookeeperPath = ZOOKEEPER_PATH_DEFAULT_VALUE;
+    private String replicaName = REPLICA_NAME_DEFAULT_VALUE;
 
     @Override
     public String getNamespace() {
@@ -46,6 +49,11 @@ public class ClickHouseConfigurationExtension implements ConfigurationExtension 
         if (zookeeperPath != null) {
             this.zookeeperPath = zookeeperPath;
         }
+
+        String replicaName = configuration.remove(REPLICA_NAME);
+        if (replicaName != null) {
+            this.replicaName = replicaName;
+        }
     }
 
     @Override
@@ -55,6 +63,9 @@ public class ClickHouseConfigurationExtension implements ConfigurationExtension 
         }
         if ("FLYWAY_CLICKHOUSE_ZOOKEEPER_PATH".equals(environmentVariable)) {
             return ZOOKEEPER_PATH;
+        }
+        if ("FLYWAY_CLICKHOUSE_REPLICA_NAME".equals(environmentVariable)) {
+            return REPLICA_NAME;
         }
         return null;
     }

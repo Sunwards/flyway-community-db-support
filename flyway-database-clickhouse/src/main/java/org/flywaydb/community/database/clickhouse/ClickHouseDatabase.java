@@ -47,6 +47,10 @@ public class ClickHouseDatabase extends Database<ClickHouseConnection> {
         return configuration.getPluginRegister().getPlugin(ClickHouseConfigurationExtension.class).getZookeeperPath();
     }
 
+    public String getReplicaName() {
+        return configuration.getPluginRegister().getPlugin(ClickHouseConfigurationExtension.class).getReplicaName();
+    }
+
     public ClickHouseConnection getSystemConnection() {
         // Queries on system.XX fail with "Code: 81. DB::Exception: Database the_database doesn't exist. (UNKNOWN_DATABASE) (version 23.7.1.2470 (official build))"
         // in case the current catalog (database) is not yet created.
@@ -114,7 +118,7 @@ public class ClickHouseDatabase extends Database<ClickHouseConnection> {
         String clusterName = getClusterName();
         boolean isClustered = StringUtils.hasText(clusterName);
 
-        String script = "CREATE TABLE IF NOT EXISTS " + table + (isClustered ? (" ON CLUSTER " + clusterName) : "") + "(" +
+        String script = "CREATE TABLE IF NOT EXISTS " + table + (isClustered ? (" ON CLUSTER `" + clusterName + "` ") : "") + "(" +
                 "    installed_rank Int32," +
                 "    version Nullable(String)," +
                 "    description String," +
@@ -130,7 +134,7 @@ public class ClickHouseDatabase extends Database<ClickHouseConnection> {
         String engine;
 
         if (isClustered) {
-            engine = "ReplicatedMergeTree('" + getZookeeperPath() + "', '{replica}')";
+            engine = "ReplicatedMergeTree('" + getZookeeperPath() + "', '" + getReplicaName() + "')";
         } else {
             engine = "MergeTree";
         }

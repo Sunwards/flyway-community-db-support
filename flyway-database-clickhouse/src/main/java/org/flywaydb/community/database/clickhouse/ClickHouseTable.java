@@ -38,7 +38,7 @@ public class ClickHouseTable extends Table<ClickHouseDatabase, ClickHouseSchema>
     protected void doDrop() throws SQLException {
         String clusterName = database.getClusterName();
 
-        jdbcTemplate.executeStatement("DROP TABLE " + this + (StringUtils.hasText(clusterName) ? (" ON CLUSTER " + clusterName) : ""));
+        jdbcTemplate.executeStatement("DROP TABLE " + this + (StringUtils.hasText(clusterName) ? (" ON CLUSTER `" + clusterName + "`") : ""));
     }
 
     @Override
